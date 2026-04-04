@@ -1,3 +1,6 @@
+#ifndef _Thread_H_
+#define _Thread_H_
+
 #include<pthread.h>
 #include<sys/types.h>
 #include<condition_variable>
@@ -55,3 +58,5 @@ namespace sylar{
             static void* run(void* arg);
     };
 }
+
+#endif

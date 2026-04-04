@@ -4,9 +4,15 @@ project(Thread)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(Thread_test test/Thread_test.cc src/Thread.cc)
+set(SOURCES
+    test/fiber_test.cc
+    src/Thread.cc
+    src/Fiber.cc
+)
 
-target_include_directories(Thread_test PRIVATE include)
+add_executable(fiber_test ${SOURCES})
+
+target_include_directories(fiber_test PRIVATE include)
 
 find_package(Threads REQUIRED)
-target_link_libraries(Thread_test PRIVATE Threads::Threads)
+target_link_libraries(fiber_test PRIVATE Threads::Threads)
