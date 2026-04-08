@@ -20,6 +20,11 @@ struct SchedulerTask{
             callback = nullptr;
             thread_id = -1;
         }
+        void reset(){
+            fiber.reset();
+            callback = nullptr;
+            thread_id = -1;
+        }
 };
 class Scheduler{
 public:
@@ -28,6 +33,8 @@ public:
 
     void AddTask(SchedulerTask task);
     void Start();
+    void Stop();
+    bool stopping();
 private:
     int m_thread_count;
     std::vector<Thread*> m_threads;

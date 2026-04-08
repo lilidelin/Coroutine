@@ -23,6 +23,19 @@ void Scheduler::Start(){
         std::cout<<"Scheduler start, root thread id: "<<m_root_thread_id<<std::endl;
     }
 }
+bool Scheduler::stopping(){
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_stop&&active_thread_count==0&&m_tasks.empty();
+}
+void Scheduler::Stop(){
+    if(stopping()){
+        return;
+    }
+    m_stop = true;
+    for(auto& th:m_threads){
+        th->join();
+    }
+}
 void Scheduler::Run(){
     int cur_thread_id = Thread::GetPid();
     if(debug){
@@ -30,6 +43,7 @@ void Scheduler::Run(){
     }
     if(cur_thread_id!=m_root_thread_id){
         Fiber::GetThis();
+        if(debug) std::cout<<"thread mian fiber id:"<<Fiber::GetFiberId()<<std::endl;
     }
     while(true){
         SchedulerTask task;
@@ -48,8 +62,13 @@ void Scheduler::Run(){
             }
         }
         if(task.fiber!=nullptr){
-            task.fiber->Resume();
+            if(task.fiber->getState()!=Fiber::FINISHED){
+                task.fiber->Resume();
+            }
             active_thread_count--;
+        }
+        if(stopping()){
+            break;
         }
     }
 }
