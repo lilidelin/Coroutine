@@ -2,7 +2,7 @@
 #include<iostream>
 #include<cassert>
 
-static bool debug = false;
+static bool debug = true;
 namespace sylar{
 // 正在运行的协程
 static thread_local Fiber* t_fiber = nullptr;
@@ -40,10 +40,10 @@ void Fiber::MainFun(){
     fiber->_func();
     fiber->_func = nullptr;
     fiber->m_state = State::FINISHED;
-    
-    //auto temp = fiber.get();
-    fiber->Yield();
+    if(debug)std::cout<<fiber.use_count()<<std::endl;
+    auto temp = fiber.get();
     fiber.reset();
+    temp->Yield();
 }
 void Fiber::Yield(){
     assert(m_state == State::RUNNING||m_state==State::FINISHED);
