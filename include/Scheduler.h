@@ -29,13 +29,17 @@ struct SchedulerTask{
 class Scheduler{
 public:
     Scheduler(int thread_count =1,bool use_caller = false);
-    void Run();
+    virtual void Run();
 
     void AddTask(SchedulerTask task);
     void Start();
     void Stop();
     bool stopping();
-private:
+    virtual void idle();
+    static Scheduler* GetThis();
+    static void SetThis(Scheduler* scheduler);
+
+protected:
     int m_thread_count;
     std::vector<Thread*> m_threads;
     std::vector<SchedulerTask> m_tasks;
@@ -45,6 +49,7 @@ private:
     std::vector<int> m_threads_id;
     int m_root_thread_id;
     int active_thread_count {0};
+    int idle_thread_count {0};
 };
 
 }

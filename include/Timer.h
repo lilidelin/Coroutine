@@ -5,6 +5,7 @@
 #include<queue>
 #include<chrono>
 #include<cstdint>
+#include<mutex>
 namespace sylar{
     class Timer{
     public:
@@ -20,14 +21,16 @@ namespace sylar{
             TimerManager();
             void addTimer(Timer* timer);
             void listExpiredCb(std::vector<std::function<void()>>& cbs);
+            uint64_t getnextTimer();
 
-        private:
+        protected:
             struct Comparator{
                 bool operator()(Timer* a, Timer* b){
                     return a->m_next > b->m_next;
                 }
             };
             std::priority_queue<Timer*,std::vector<Timer*>,Comparator> m_timers;
+            std::mutex m_mutex;
     };
 }
 
